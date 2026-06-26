@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hubmarket · Gestão</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="mobile-topbar">
+  <button class="icon-btn" id="btnOpenSidebar" aria-label="Abrir menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg></button>
+  <div class="brand brand--mobile"><span class="brand-mark">H</span><span>Hubmarket</span></div>
+  <button class="icon-btn" id="btnThemeMobile" aria-label="Alternar tema"><svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M5 5l1.5 1.5M17.5 17.5L19 19M3 12h2M19 12h2M5 19l1.5-1.5M17.5 6.5L19 5" stroke-linecap="round"/><circle cx="12" cy="12" r="4.5"/></svg></button>
+</header>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">H</span>
+      <div class="brand-text"><strong>Hubmarket</strong><small>Painel de Gestão</small></div>
+      <button class="icon-btn sidebar-close" id="btnCloseSidebar" aria-label="Fechar menu"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+    <nav class="nav" id="mainNav">
+      <button class="nav-item is-active" data-section="dashboard"><span>Painel</span></button>
+      <button class="nav-item" data-section="tasks"><span>Tarefas</span></button>
+      <button class="nav-item" data-section="time"><span>Controle de tempo</span></button>
+      <button class="nav-item" data-section="recurring"><span>Recorrentes</span></button>
+      <button class="nav-item" data-section="goals"><span>Metas</span></button>
+      <button class="nav-item" data-section="calendar"><span>Calendário</span></button>
+      <button class="nav-item" data-section="reports"><span>Relatórios</span></button>
+      <button class="nav-item" data-section="settings"><span>Configurações</span></button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="icon-btn" id="btnTheme"><span>Alternar Tema</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search-wrap"><input type="text" id="globalSearch" placeholder="Buscar tarefas..."></div>
+      <div class="topbar-right"><span id="topbarDate"></span><div class="avatar">EA</div></div>
+    </div>
+    <div id="searchResults" class="search-results hidden"></div>
+
+    <div class="content">
+
+      <!-- PAINEL -->
+      <section class="view" id="view-dashboard">
+        <div class="view-head"><h1>Painel</h1><p>Visão geral do seu dia</p></div>
+        <div class="cards-grid" id="dashCards"></div>
+        <div class="panel">
+          <h3>Tarefas de hoje</h3>
+          <div id="dashTodayList"></div>
+        </div>
+      </section>
+
+      <!-- TAREFAS / KANBAN (Acompanhamento é a 1ª coluna) -->
+      <section class="view hidden" id="view-tasks">
+        <div class="view-head"><h1>Tarefas</h1><p>Arraste os cards entre colunas. Use as setas para reordenar dentro da coluna.</p></div>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btnNewTask">+ Nova Tarefa</button>
+          <button class="btn" id="btnNewFollowUp">+ Acompanhamento</button>
+        </div>
+        <div class="kanban" id="kanbanBoard"></div>
+      </section>
+
+      <!-- CONTROLE DE TEMPO -->
+      <section class="view hidden" id="view-time">
+        <div class="view-head"><h1>Controle de tempo</h1><p>Registre sua jornada de trabalho em tempo real</p></div>
+        <div class="time-panel panel">
+          <div class="time-status">
+            <span class="time-badge" id="timeStatusBadge">Parado</span>
+            <span class="time-elapsed" id="timeElapsed">00:00:00</span>
+          </div>
+          <div class="time-actions">
+            <button class="btn btn-primary" data-time="work">Iniciar trabalho</button>
+            <button class="btn" data-time="pause">Pausar</button>
+            <button class="btn" data-time="lunch">Almoço</button>
+            <button class="btn" data-time="meeting">Reunião</button>
+            <button class="btn btn-danger" data-time="end">Encerrar dia</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Resumo de hoje</h3>
+          <div class="time-summary" id="timeSummaryToday"></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="timeLogTable">
+            <thead><tr><th>Tipo</th><th>Início</th><th>Fim</th><th>Duração</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- RECORRENTES -->
+      <section class="view hidden" id="view-recurring">
+        <div class="view-head"><h1>Recorrentes</h1><p>Tarefas geradas automaticamente no quadro, na ordem definida aqui</p></div>
+        <div class="toolbar"><button class="btn btn-primary" id="btnNewRecurring">+ Nova Recorrência</button></div>
+        <div class="table-wrap">
+          <table class="data-table" id="recurringTable">
+            <thead><tr><th></th><th>Nome</th><th>Categoria</th><th>Recorrência</th><th>Última geração</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- METAS -->
+      <section class="view hidden" id="view-goals">
+        <div class="view-head"><h1>Metas</h1><p>Defina a meta e o prazo: as tarefas diárias são geradas automaticamente</p></div>
+        <div class="toolbar"><button class="btn btn-primary" id="btnNewGoal">+ Nova Meta</button></div>
+        <div class="goals-grid" id="goalsGrid"></div>
+      </section>
+
+      <!-- CALENDÁRIO -->
+      <section class="view hidden" id="view-calendar">
+        <div class="view-head"><h1>Calendário</h1></div>
+        <div class="calendar-toolbar">
+          <button class="btn" id="calPrev">Anterior</button>
+          <h2 id="calLabel"></h2>
+          <button class="btn" id="calNext">Próximo</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <!-- RELATÓRIOS -->
+      <section class="view hidden" id="view-reports">
+        <div class="view-head"><h1>Relatórios</h1></div>
+        <div class="toolbar">
+          <select id="reportType">
+            <option value="tasks">Tarefas concluídas</option>
+            <option value="timeByCategory">Tempo por categoria</option>
+            <option value="timeByTask">Tempo por tarefa</option>
+            <option value="goals">Metas</option>
+            <option value="followup">Acompanhamentos</option>
+          </select>
+          <button class="btn" id="btnExportCSV">Exportar CSV</button>
+        </div>
+        <div class="panel" id="reportOutput"></div>
+      </section>
+
+      <!-- CONFIGURAÇÕES -->
+      <section class="view hidden" id="view-settings">
+        <div class="view-head"><h1>Configurações</h1></div>
+        <div class="settings-grid">
+          <div class="panel">
+            <h3>Aparência</h3>
+            <div class="setting-row"><span>Tema escuro</span><label class="switch"><input type="checkbox" id="darkModeSwitch"><span class="slider"></span></label></div>
+          </div>
+          <div class="panel">
+            <h3>Categorias</h3>
+            <div id="settingsCategoriesList" class="settings-list"></div>
+            <div class="settings-add">
+              <input type="text" id="inputNewCategory" placeholder="Nova categoria...">
+              <button class="btn btn-primary" id="btnAddCategory">Add</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Marketplaces</h3>
+            <div id="settingsMarketplacesList" class="settings-list"></div>
+            <div class="settings-add">
+              <input type="text" id="inputNewMarketplace" placeholder="Novo marketplace...">
+              <button class="btn btn-primary" id="btnAddMarketplace">Add</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Backup</h3>
+            <div class="setting-row"><span>Baixar backup (JSON)</span><button class="btn" id="btnBackup">Baixar</button></div>
+            <div class="setting-row"><span>Restaurar backup</span><label class="btn file-btn">Selecionar<input type="file" id="inputRestore" accept=".json" hidden></label></div>
+            <div class="setting-row"><span>Apagar todos os dados</span><button class="btn btn-danger" id="btnWipe">Apagar</button></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay"><div class="modal" id="modalBox"></div></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
